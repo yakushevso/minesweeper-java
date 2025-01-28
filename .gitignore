@@ -1,0 +1,20 @@
+# course config files
+*.yaml
+
+# gradle
+.gradle/
+/gradle/
+/gradlew
+/gradlew.bat
+build
+out
+
+# idea config
+.idea
+
+# stages
+/Minesweeper (Java)/Battle/
+/Minesweeper (Java)/Flexible mines/
+/Minesweeper (Java)/Lay the groundwork/
+/Minesweeper (Java)/Look around you/
+/Minesweeper (Java)/Prepare for battle/

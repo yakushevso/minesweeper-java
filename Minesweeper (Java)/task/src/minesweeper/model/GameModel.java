@@ -16,7 +16,7 @@ public class GameModel {
         board = new Cell[rows][cols];
 
         for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board[i].length; j++) {
+            for (int j = 0; j < board[0].length; j++) {
                 board[i][j] = new Cell();
             }
         }
@@ -43,5 +43,33 @@ public class GameModel {
                 i--;
             }
         }
+    }
+
+    public void calculateAdjacentMines() {
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length; j++) {
+                if (!board[i][j].isMine()) {
+                    board[i][j].setAdjacentMines(countMinesAround(i, j));
+                }
+            }
+        }
+    }
+
+    private int countMinesAround(int row, int col) {
+        int count = 0;
+
+        for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= 1; j++) {
+                int newRow = row + i;
+                int newCol = col + j;
+
+                if (newRow >= 0 && newCol >= 0 && newRow < rows && newCol < cols
+                        && board[newRow][newCol].isMine()) {
+                    count++;
+                }
+            }
+        }
+
+        return count;
     }
 }

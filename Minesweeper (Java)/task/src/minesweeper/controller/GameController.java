@@ -19,6 +19,7 @@ public class GameController {
 
         model.initializeBoard(9, 9, mines);
         model.placeMines();
+        model.calculateAdjacentMines();
         view.displayBoard(model.getBoard());
     }
 }

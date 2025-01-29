@@ -13,7 +13,11 @@ public class GameView {
                 if (cell.isMine()) {
                     System.out.print('X');
                 } else {
-                    System.out.print('.');
+                    if (cell.getAdjacentMines() > 0) {
+                        System.out.print(cell.getAdjacentMines());
+                    } else {
+                        System.out.print('.');
+                    }
                 }
             }
             System.out.println();

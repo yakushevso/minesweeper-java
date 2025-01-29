@@ -2,10 +2,7 @@ package minesweeper.model;
 
 public class Cell {
     private boolean isMine;
-
-    public Cell() {
-        this.isMine = false;
-    }
+    private int adjacentMines;
 
     public boolean isMine() {
         return isMine;
@@ -13,5 +10,13 @@ public class Cell {
 
     public void setMine(boolean mine) {
         isMine = mine;
+    }
+
+    public int getAdjacentMines() {
+        return adjacentMines;
+    }
+
+    public void setAdjacentMines(int adjacentMines) {
+        this.adjacentMines = adjacentMines;
     }
 }

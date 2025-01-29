@@ -2,6 +2,7 @@ package minesweeper.controller;
 
 import minesweeper.model.GameModel;
 import minesweeper.view.GameView;
+import minesweeper.view.Messages;
 
 public class GameController {
     private final GameModel model;
@@ -13,7 +14,10 @@ public class GameController {
     }
 
     public void run() {
-        model.initializeBoard(9, 9, 10);
+        view.displayOutput(Messages.HOW_MANY_MINES);
+        int mines = view.getInputNum();
+
+        model.initializeBoard(9, 9, mines);
         model.placeMines();
         view.displayBoard(model.getBoard());
     }

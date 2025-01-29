@@ -29,6 +29,10 @@ public class GameModel {
     public void placeMines() {
         Random random = new Random();
 
+        if (mines > rows * cols) {
+            mines = rows * cols;
+        }
+
         for (int i = 0; i < mines; i++) {
             int row = random.nextInt(rows);
             int col = random.nextInt(cols);

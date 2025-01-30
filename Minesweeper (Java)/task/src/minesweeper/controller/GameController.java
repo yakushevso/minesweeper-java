@@ -14,12 +14,65 @@ public class GameController {
     }
 
     public void run() {
-        view.displayOutput(Messages.HOW_MANY_MINES);
-        int mines = view.getInputNum();
+        model.initializeBoard(9, 9);
 
-        model.initializeBoard(9, 9, mines);
-        model.placeMines();
-        model.calculateAdjacentMines();
-        view.displayBoard(model.getBoard());
+        view.displayMessage(Messages.ENTER_MINE_COUNT);
+        int mineCount = getMineCount();
+
+        model.placeRandomMines(mineCount);
+        model.calculateMinesAround();
+
+        view.displayBoard(model.getBoardView());
+
+        while (!model.isGameOver()) {
+            view.displayMessage(Messages.ENTER_COORDINATES);
+            int[] coord = getCoordinates();
+
+            boolean move = model.makeMove(coord);
+
+            if (move) {
+                view.displayBoard(model.getBoardView());
+            } else {
+                view.displayMessage(Messages.CELL_HAS_NUMBER);
+            }
+
+            model.checkState();
+        }
+
+        view.displayMessage(Messages.CONGRATULATIONS);
+    }
+
+    private int getMineCount() {
+        while (true) {
+            try {
+                int count = Integer.parseInt(view.getInput());
+
+                if (model.isValidMineCount(count)) {
+                    return count;
+                } else {
+                    view.displayMessage(Messages.INVALID_MINE_COUNT);
+                }
+            } catch (NumberFormatException e) {
+                view.displayMessage(Messages.INVALID_NUMBER);
+            }
+        }
+    }
+
+    private int[] getCoordinates() {
+        while (true) {
+            try {
+                String[] coord = view.getInput().split("\\s+");
+                int x = Integer.parseInt(coord[0]);
+                int y = Integer.parseInt(coord[1]);
+
+                if (model.isValidCoordinates(x, y)) {
+                    return new int[]{x, y};
+                } else {
+                    view.displayMessage(Messages.INVALID_COORDINATES);
+                }
+            } catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
+                view.displayMessage(Messages.INVALID_COORDINATES);
+            }
+        }
     }
 }

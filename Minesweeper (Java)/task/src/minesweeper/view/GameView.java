@@ -1,43 +1,35 @@
 package minesweeper.view;
 
-import minesweeper.model.Cell;
-
 import java.util.Scanner;
 
 public class GameView {
     private final Scanner sc = new Scanner(System.in);
 
-    public void displayBoard(Cell[][] board) {
-        for (Cell[] cells : board) {
-            for (Cell cell : cells) {
-                if (cell.isMine()) {
-                    System.out.print('X');
-                } else {
-                    if (cell.getAdjacentMines() > 0) {
-                        System.out.print(cell.getAdjacentMines());
-                    } else {
-                        System.out.print('.');
-                    }
-                }
-            }
-            System.out.println();
-        }
-    }
-
-    public void displayOutput(Object message) {
+    public void displayMessage(Object message) {
         System.out.println(message);
     }
 
-    public int getInputNum() {
-        while (true) {
-            if (sc.hasNextInt()) {
-                int input = sc.nextInt();
-                sc.nextLine();
-                return input;
-            } else {
-                System.out.println(Messages.INPUT_NUM_ERROR);
-                sc.nextLine();
-            }
+    public String getInput() {
+        return sc.nextLine().trim();
+    }
+
+    public void displayBoard(char[][] board) {
+        System.out.print(" |");
+        for (int j = 1; j <= board[0].length; j++) {
+            System.out.print(j);
         }
+        System.out.println("|");
+
+        System.out.println("-|" + "-".repeat(board[0].length) + "|");
+
+        for (int i = 0; i < board.length; i++) {
+            System.out.print(i + 1 + "|");
+            for (int j = 0; j < board[i].length; j++) {
+                System.out.print(board[i][j]);
+            }
+            System.out.println("|");
+        }
+
+        System.out.println("-|" + "-".repeat(board[0].length) + "|");
     }
 }

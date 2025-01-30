@@ -2,7 +2,9 @@ package minesweeper.model;
 
 public class Cell {
     private boolean isMine;
-    private int adjacentMines;
+    private int minesAround;
+    private boolean isOpen;
+    private boolean isFlagged;
 
     public boolean isMine() {
         return isMine;
@@ -12,11 +14,27 @@ public class Cell {
         isMine = mine;
     }
 
-    public int getAdjacentMines() {
-        return adjacentMines;
+    public int getMinesAround() {
+        return minesAround;
     }
 
-    public void setAdjacentMines(int adjacentMines) {
-        this.adjacentMines = adjacentMines;
+    public void setMinesAround(int minesAround) {
+        this.minesAround = minesAround;
+    }
+
+    public boolean isOpen() {
+        return isOpen;
+    }
+
+    public void setOpen(boolean open) {
+        isOpen = open;
+    }
+
+    public boolean isFlagged() {
+        return isFlagged;
+    }
+
+    public void setFlagged(boolean flagged) {
+        isFlagged = flagged;
     }
 }

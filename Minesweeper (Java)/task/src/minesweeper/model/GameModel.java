@@ -7,6 +7,7 @@ public class GameModel {
     private int cols;
     private Cell[][] board;
     private boolean isGameOver;
+    private boolean isWin;
 
     public void initializeBoard(int rows, int cols) {
         this.rows = rows;
@@ -45,16 +46,20 @@ public class GameModel {
 
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[i].length; j++) {
-                if (board[i][j].isFlagged()) {
-                    boardView[i][j] = '*';
-                } else if (board[i][j].isOpen()) {
+                if (board[i][j].isOpen()) {
                     if (board[i][j].isMine()) {
                         boardView[i][j] = 'X';
                     } else if (board[i][j].getMinesAround() > 0) {
                         boardView[i][j] = (char) ('0' + board[i][j].getMinesAround());
+                    } else {
+                        boardView[i][j] = '/';
                     }
                 } else {
-                    boardView[i][j] = '.';
+                    if (board[i][j].isFlagged()) {
+                        boardView[i][j] = '*';
+                    } else {
+                        boardView[i][j] = '.';
+                    }
                 }
             }
         }
@@ -99,40 +104,94 @@ public class GameModel {
         return x <= rows && x > 0 && y <= cols && y > 0;
     }
 
-    public boolean makeMove(int[] coord) {
-        int x = coord[1] - 1;
-        int y = coord[0] - 1;
+    public boolean isCellOpen(int x, int y) {
+        return board[x][y].isOpen();
+    }
 
-        if (!board[x][y].isOpen()) {
-            board[x][y].setFlagged(!board[x][y].isFlagged());
-            return true;
-        }
-
-        return false;
+    public void toggleFlag(int x, int y) {
+        board[x][y].setFlagged(!board[x][y].isFlagged());
     }
 
     public void checkState() {
-        int mine = 0;
-        int flag = 0;
+        int flaggedMines = 0;
+        int totalFlags = 0;
+        int openCells = 0;
+        int totalMines = 0;
+        int totalCells = rows * cols;
 
-        for (Cell[] cells : board) {
-            for (Cell cell : cells) {
-                if (cell.isFlagged()) {
-                    flag++;
-
-                    if (cell.isMine()) {
-                        mine++;
+        for (Cell[] row : board) {
+            for (Cell cell : row) {
+                if (cell.isMine()) {
+                    if (cell.isOpen()) {
+                        isGameOver = true;
+                        return;
                     }
+
+                    totalMines++;
+
+                    if (cell.isFlagged()) {
+                        flaggedMines++;
+                    }
+                }
+                if (cell.isFlagged()) {
+                    totalFlags++;
+                }
+                if (cell.isOpen()) {
+                    openCells++;
                 }
             }
         }
 
-        if (flag != 0 && mine == flag) {
+        boolean allSafeCellsOpened = flaggedMines == 0 && totalMines == totalCells - (totalFlags + openCells);
+        boolean allMinesFlagged = (flaggedMines == totalMines && totalFlags == totalMines);
+
+        if (allSafeCellsOpened || allMinesFlagged) {
             isGameOver = true;
+            isWin = true;
         }
     }
 
     public boolean isGameOver() {
         return isGameOver;
+    }
+
+    public boolean isWin() {
+        return isWin;
+    }
+
+    public void openCell(int x, int y) {
+        if (board[x][y].isMine()) {
+            board[x][y].setOpen(true);
+        } else {
+            calculateFreeAround(x, y);
+        }
+    }
+
+    public void calculateFreeAround(int x, int y) {
+        if (x < 0 || x >= rows || y < 0 || y >= cols) {
+            return;
+        }
+
+        if (board[x][y].isOpen()) {
+            return;
+        }
+
+        board[x][y].setOpen(true);
+
+        for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= 1; j++) {
+                calculateFreeAround(x + i, y + j);
+            }
+        }
+    }
+
+    public void openAllCells() {
+        for (Cell[] cells : board) {
+            for (Cell cell : cells) {
+                if (!cell.isOpen()) {
+                    cell.setOpen(true);
+                }
+            }
+        }
     }
 }

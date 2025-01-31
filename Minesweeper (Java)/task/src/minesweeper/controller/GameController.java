@@ -17,29 +17,26 @@ public class GameController {
         model.initializeBoard(9, 9);
 
         view.displayMessage(Messages.ENTER_MINE_COUNT);
-        int mineCount = getMineCount();
+        int mines = getMineCount();
 
-        model.placeRandomMines(mineCount);
+        model.placeRandomMines(mines);
         model.calculateMinesAround();
 
-        view.displayBoard(model.getBoardView());
-
         while (!model.isGameOver()) {
+            view.displayBoard(model.getBoardView());
             view.displayMessage(Messages.ENTER_COORDINATES);
-            int[] coord = getCoordinates();
-
-            boolean move = model.makeMove(coord);
-
-            if (move) {
-                view.displayBoard(model.getBoardView());
-            } else {
-                view.displayMessage(Messages.CELL_HAS_NUMBER);
-            }
-
+            makeMove(getPlayerMove());
             model.checkState();
         }
 
-        view.displayMessage(Messages.CONGRATULATIONS);
+        model.openAllCells();
+        view.displayBoard(model.getBoardView());
+
+        if (model.isWin()) {
+            view.displayMessage(Messages.CONGRATULATIONS);
+        } else {
+            view.displayMessage(Messages.GAME_OVER);
+        }
     }
 
     private int getMineCount() {
@@ -58,21 +55,37 @@ public class GameController {
         }
     }
 
-    private int[] getCoordinates() {
+    private Move getPlayerMove() {
         while (true) {
             try {
-                String[] coord = view.getInput().split("\\s+");
-                int x = Integer.parseInt(coord[0]);
-                int y = Integer.parseInt(coord[1]);
+                String[] coord = view.getInput().split("\\s", 3);
+                int x = Integer.parseInt(coord[1]);
+                int y = Integer.parseInt(coord[0]);
+                String command = coord[2];
 
                 if (model.isValidCoordinates(x, y)) {
-                    return new int[]{x, y};
+                    return new Move(x - 1, y - 1, command);
                 } else {
                     view.displayMessage(Messages.INVALID_COORDINATES);
                 }
             } catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
                 view.displayMessage(Messages.INVALID_COORDINATES);
             }
+        }
+    }
+
+    private void makeMove(Move move) {
+        int x = move.x();
+        int y = move.y();
+
+        if (!model.isCellOpen(x, y)) {
+            switch (move.command()) {
+                case "mine" -> model.toggleFlag(x, y);
+                case "free" -> model.openCell(x, y);
+                default -> view.displayMessage(Messages.INVALID_COMMAND);
+            }
+        } else {
+            view.displayMessage(Messages.CELL_OPEN);
         }
     }
 }
